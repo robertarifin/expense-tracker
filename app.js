@@ -4,6 +4,7 @@ const port = 3000;
 const homeRoutes = require('./routes/index');
 const memberRoutes = require('./routes/member');
 const session = require('express-session');
+const transactionRoutes = require('./routes/transaction')
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: false}));
@@ -19,6 +20,7 @@ app.use(session({
 app.get('/*', (req, res) => {
     res.render('./pages/404error.ejs');    
 });
+app.use('/transaction', transactionRoutes)
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
