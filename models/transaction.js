@@ -28,6 +28,10 @@ module.exports = (sequelize, DataTypes) => {
     }
   });
 
+  Transaction.afterDestroy((input, options) => {
+    console.log(input, `from hooks after destroy===========`)
+  });
+
   Transaction.associate = function(models) {
     Transaction.belongsTo(models.User)
     Transaction.belongsToMany(models.Expense, {through: models.ExpensesTransaction, foreignKey: 'TransactionId'})

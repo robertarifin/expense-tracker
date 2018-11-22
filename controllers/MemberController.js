@@ -36,6 +36,7 @@ class MemberController {
             
             let inputPass = decrypt(input.password, data.password)
             if(!inputPass) throw `Wrong password`;
+            
             req.session.user = {
                 id: data.id,
                 firstName: data.firstName,

@@ -4,7 +4,8 @@ const port = 3000;
 const homeRoutes = require('./routes/index');
 const memberRoutes = require('./routes/member');
 const session = require('express-session');
-const transactionRoutes = require('./routes/transaction')
+const transactionRoutes = require('./routes/transaction');
+const formatCurrency = require('./helpers/formatCurrency');
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: false}));
@@ -16,7 +17,8 @@ app.use(session({
 }));
 
 app.use(function (req, res, next) {
-    res.locals.session = req.session
+    res.locals.session = req.session;
+    res.locals.formatCurrency = formatCurrency;
     next();
 });
 
