@@ -4,17 +4,37 @@ const Model = require('../models/index')
 
 class TransactionController {
     static showExpenseForm(req, res) {
-        Model.Expense.findAll()
-        .then(data => {
-            let obj = {
-                id: req.params.id,
-                data: data,
-                errorMessage : req.query.result || ''
-            }
-
-            res.render('./pages/expense.ejs', obj)
+     Model.Expense.findAll()
+     .then(data => {
+        let obj = {
+            id: req.params.id,
+            data: data,
+            errorMessage : req.query.result || ''
+        }
+    
+        res.render('./pages/expense.ejs', obj)
         })
         .catch(err => {
+            res.send(err)
+        })
+    }
+
+    static getTransactionList(req, res) {
+        Model.Transaction.findAll( {
+            where: {
+                UserId: 5
+            },
+            include: [{
+                model: Model.Expense,
+                include: [{
+                model: Model.User,
+                }]
+            }]
+        })
+        .then((data) => {
+            res.send(data)
+        })
+        .catch((err) => {
             res.send(err)
         })
     }

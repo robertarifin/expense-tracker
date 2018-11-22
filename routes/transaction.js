@@ -8,6 +8,8 @@ routes.get('/', (req, res) => {
 })
 
 routes.get('/:id/add-income', transactionController.showIncomeForm)
+routes.get('/:id', transactionController.getTransactionList)
+
 routes.post('/:id/add-income', transactionController.addIncome)
 
 routes.get('/:id/add-expense', transactionController.showExpenseForm)
