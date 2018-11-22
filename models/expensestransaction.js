@@ -12,7 +12,7 @@ module.exports = (sequelize, DataTypes) => {
     detail_transaction: DataTypes.STRING
   }, {});
   ExpensesTransaction.associate = function(models) {
-    // associations can be defined here
+   
   };
   return ExpensesTransaction;
 };

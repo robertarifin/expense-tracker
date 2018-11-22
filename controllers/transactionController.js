@@ -5,7 +5,6 @@ const Model = require('../models/index')
 class TransactionController {
     static showMonthlyInfo(req, res) {
         let totalExpense = []
-        let currentMonth = new Date().getMonth()
         Model.Transaction.findAll({
             where: {
                 UserId: req.session.user.id,
@@ -24,19 +23,44 @@ class TransactionController {
             })
         })
         .then(incomes => {
+            let items = []
+            let currentMonth = new Date().getMonth()
+            let currentYear = new Date().getFullYear()
             let expense = 0
             let income = 0
 
+            for (let i = 1; i <= 12; i++) {
+                let monthlyExpense = 0
+
+                for (let j = 0; j < totalExpense.length; j++) {  
+                    let month = new Date(totalExpense[j].date_transaction).getMonth() + 1
+                    
+                    if (month == i) {
+                        monthlyExpense += totalExpense[j].Expenses[0].ExpensesTransaction.price
+                    }      
+                }
+                
+                items.push({
+                    x: i,
+                    y: monthlyExpense 
+                })
+            }
+
+
             for (let i = 0; i < incomes.length; i++) {
                 let month = new Date(incomes[i].date_transaction).getMonth()
-                if (month == currentMonth) {
+                let year = new Date(incomes[i].date_transaction).getFullYear()
+
+                if (month == currentMonth && year == currentYear) {
                     income +=  incomes[i].amount
                 }
             }
 
             for (let i = 0; i < totalExpense.length; i++) {
                 let month = new Date(totalExpense[i].date_transaction).getMonth()
-                if (month == currentMonth) {
+                let year = new Date(totalExpense[i].date_transaction).getFullYear()
+
+                if (month == currentMonth  && year == currentYear) {
                     expense += totalExpense[i].Expenses[0].ExpensesTransaction.price
                 }
             }
@@ -44,13 +68,15 @@ class TransactionController {
             let obj = {
                 expense: expense,
                 income: income,
-                money: income - expense
+                money: income - expense,
+                items: items
             }
+
+            console.log(obj.items)
         
             res.render('./pages/transaction.ejs', obj)
         })
         .catch(err => {
-            console.log(err)
             res.send(err)
         })
      
@@ -156,5 +182,6 @@ class TransactionController {
         }
     }
 }
+
 
 module.exports = TransactionController
