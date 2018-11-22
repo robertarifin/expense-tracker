@@ -18,7 +18,7 @@ class MemberController {
             password: req.body.password
         })
         .then( data => {
-            res.redirect('/member/login', {msg: null});
+            res.redirect('/member/login');
         })
         .catch( err => {
             res.send(err);
@@ -55,6 +55,10 @@ class MemberController {
         });
     }
     
+    static logout(req, res) {
+        delete req.session.user;
+        res.redirect('/');
+    }
 }
 
 module.exports = MemberController
