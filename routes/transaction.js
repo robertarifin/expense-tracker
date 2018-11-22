@@ -3,9 +3,7 @@
 const routes = require('express').Router()
 const transactionController = require('../controllers/transactionController.js')
 
-routes.get('/', (req, res) => {
-    res.render('./pages/transaction.ejs');
-})
+routes.get('/', transactionController.showTransactionList)
 
 routes.get('/:id/add-expense', (req, res) => {
 

@@ -40,6 +40,23 @@ class TransactionController {
             res.redirect(`/transaction/2/add-income?result=minimal price is 500`)
         }
     }
+
+    static showTransactionList(req, res) {
+        // res.send(req.session.user);
+        Model.Transaction.findOne({
+            where: {id: req.session.user.id},
+            include: [{model: Model.ExpenseTransaction}, {model: Model.Expense}]
+        })
+        .then(transaction => {
+
+            // still not working
+            res.send(transaction);
+            // res.render('./pages/transaction.ejs');
+        })
+        .catch(err => {
+            res.send({msg:`Error getting transaction list`, err:err});
+        });
+    }
 }
 
 module.exports = TransactionController
