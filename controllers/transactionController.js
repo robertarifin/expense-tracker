@@ -1,11 +1,10 @@
 "use strict"
 
 const Model = require('../models/index')
-const Sequelize = Model.Sequelize
-const sequelize = Model.sequelize
 
 class TransactionController {
     static showMonthlyInfo(req, res) {
+        let totalExpense = []
         let currentMonth = new Date().getMonth()
         Model.Transaction.findAll({
             where: {
@@ -16,40 +15,39 @@ class TransactionController {
             }
         })
         .then(expenses => {
-            Model.Income.findAll( {
+            totalExpense = expenses
+
+            return Model.Income.findAll( {
                 where: {
                     UserId: req.session.user.id
                 }
             })
-            .then(incomes => {
-                let expense = 0
-                let income = 0
+        })
+        .then(incomes => {
+            let expense = 0
+            let income = 0
 
-                console.log(incomes)
-                for (let i = 0; i < incomes.length; i++) {
-                    let month = new Date(expenses[i].date_transaction).getMonth()
-                    if (month == currentMonth) {
-                        income +=  incomes[i].amount
-                    }
+            for (let i = 0; i < incomes.length; i++) {
+                let month = new Date(incomes[i].date_transaction).getMonth()
+                if (month == currentMonth) {
+                    income +=  incomes[i].amount
                 }
+            }
 
-                for (let i = 0; i < expenses.length; i++) {
-                    let month = new Date(expenses[i].date_transaction).getMonth()
-                    if (month == currentMonth) {
-                        expense += expenses[i].Expenses[0].ExpensesTransaction.price
-                    }
+            for (let i = 0; i < totalExpense.length; i++) {
+                let month = new Date(totalExpense[i].date_transaction).getMonth()
+                if (month == currentMonth) {
+                    expense += totalExpense[i].Expenses[0].ExpensesTransaction.price
                 }
-    
-                let obj = {
-                    expense: expense,
-                    income: income,
-                    money: income - expense
-                }
-            
-                res.render('./pages/transaction.ejs', obj)
-            })
+            }
 
-           
+            let obj = {
+                expense: expense,
+                income: income,
+                money: income - expense
+            }
+        
+            res.render('./pages/transaction.ejs', obj)
         })
         .catch(err => {
             console.log(err)
@@ -111,7 +109,6 @@ class TransactionController {
             })
             .catch((err) => {
                 if (err.errors[0].message == 'Validation isDate on date_transaction failed') {
-                    console.log(' masa ga masuk')
                     res.redirect(`/transaction/2/add-expense?result=invalid date`)
                 } else {
                     res.redirect(`/transaction/2/add-expense?result=${err}`)
