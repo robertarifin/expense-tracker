@@ -6,19 +6,11 @@ routes.get('/', (req, res) => {
 
 })
 
-routes.get('/:id/add-expense', (req, res) => {
+routes.get('/:id/add-income', transactionController.showIncomeForm)
+routes.post('/:id/add-income', transactionController.addIncome)
 
-})
+routes.get('/:id/add-expense', transactionController.showExpenseForm)
+routes.post('/:id/add-expense', transactionController.addExpense)
 
-routes.post('/:id/add-expense', (req, res) => {
-
-})
-
-routes.get('/:id/add-income', transactionController.showExpenseForm)
-routes.post('/:id/add-income', transactionController.addExpense)
-
-routes.post('/:id/add-income', (req, res) => {
-
-})
 
 module.exports = routes
