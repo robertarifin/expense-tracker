@@ -2,7 +2,12 @@
 module.exports = (sequelize, DataTypes) => {
   const Transaction = sequelize.define('Transaction', {
     UserId: DataTypes.INTEGER,
-    date_transaction: DataTypes.DATE
+    date_transaction:  {
+      type: DataTypes.DATE,
+      validate: {
+        isDate: true
+      }
+    },
   }, {
     hooks: {
       afterCreate: (input, options) => {
@@ -25,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
 
   Transaction.associate = function(models) {
     Transaction.belongsTo(models.User)
-    Transaction.belongsToMany(models.Expense, {through: models.ExpensesTransaction})
+    Transaction.belongsToMany(models.Expense, {through: models.ExpensesTransaction, foreignKey: 'TransactionId'})
   };
   return Transaction;
 };
