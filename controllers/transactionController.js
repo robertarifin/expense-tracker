@@ -20,21 +20,24 @@ class TransactionController {
     }
 
     static getTransactionList(req, res) {
+        
+        // res.send(req.session.user)
         Model.Transaction.findAll( {
             where: {
-                UserId: 5
+                UserId: req.session.user.id
             },
-            include: [{
-                model: Model.Expense,
-                include: [{
-                model: Model.User,
-                }]
-            }]
+            include: [
+                {model: Model.Expense}, {model: Model.User}
+            ]        
         })
         .then((data) => {
-            res.send(data)
+            console.log(data[0].Expenses[0].ExpensesTransaction.price);
+            // console.log(data[0].Expenses.categoryName, `========`);
+            // res.send(data)
+            res.render('./pages/transaction.ejs', {data: data});
         })
         .catch((err) => {
+            console.log(err, `=========`);
             res.send(err)
         })
     }
@@ -102,23 +105,6 @@ class TransactionController {
         } else {
             res.redirect(`/transaction/2/add-income?result=minimal price is 500`)
         }
-    }
-
-    static showTransactionList(req, res) {
-        // res.send(req.session.user);
-        Model.Transaction.findOne({
-            where: {id: req.session.user.id},
-            include: [{model: Model.ExpenseTransaction}, {model: Model.Expense}]
-        })
-        .then(transaction => {
-
-            // still not working
-            res.send(transaction);
-            // res.render('./pages/transaction.ejs');
-        })
-        .catch(err => {
-            res.send({msg:`Error getting transaction list`, err:err});
-        });
     }
 }
 

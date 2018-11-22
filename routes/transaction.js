@@ -3,7 +3,7 @@
 const routes = require('express').Router()
 const transactionController = require('../controllers/transactionController.js')
 
-routes.get('/', transactionController.showTransactionList)
+routes.get('/', transactionController.getTransactionList)
 
 routes.get('/:id/add-income', transactionController.showIncomeForm)
 routes.get('/:id', transactionController.getTransactionList)
