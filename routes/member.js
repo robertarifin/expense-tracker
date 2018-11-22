@@ -13,5 +13,7 @@ routes.get('/login', (req, res) => {
 
 routes.post('/login', MemberController.loginAuth);
 
+routes.get('/logout', MemberController.logout);
+
 
 module.exports = routes

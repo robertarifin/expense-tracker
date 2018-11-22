@@ -54,6 +54,10 @@ class MemberController {
         });
     }
     
+    static logout(req, res) {
+        delete req.session.user;
+        res.redirect('/');
+    }
 }
 
 module.exports = MemberController
