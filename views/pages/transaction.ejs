@@ -3,6 +3,7 @@
 
 <h1>Transaction List</h1>
 
+<%- include ../partials/alert.ejs %>
 <table class="table">
         <thead>
             <tr>
@@ -24,7 +25,7 @@
       </table>
 
 <a href="/transaction/<%= session.user.id%>/add-income" class="btn btn-primary" role="button">Add Income</a>
-<a href="/transaction/<%= session.user.id%>/add-expense" class="btn btn-primary" role="button">Add Expense</a>
+<a href="/transaction/<%= session.user.id%>/add-expense" class="btn btn-danger" role="button">Add Expense</a>
 <br>
 <br>
 <form action="/transaction" method="GET">
@@ -57,7 +58,7 @@
             <td><%= row.date_transaction.toDateString() %></td>
             <td><%= row.Expenses[0].categoryName %></td>
             <td><%= formatCurrency(row.Expenses[0].ExpensesTransaction.price) %></td>
-            <td><a href="/transaction/<%= row.id %>/edit-expense" class="btn btn-primary btn-sm" role="button">Edit</a> | <a href="/transaction/<%= session.user.id%>/<%=row.id %>/delete-expense" onclick="return confirm('Delete this expense?')" class="btn btn-primary btn-sm" role="button">Delete</a> </td>
+            <td><a href="/transaction/<%= row.id %>/edit-expense" class="btn btn-primary btn-sm" role="button">Edit</a> | <a href="/transaction/<%= session.user.id%>/<%=row.id %>/delete-expense" onclick="return confirm('Delete this expense?')" class="btn btn-danger btn-sm" role="button">Delete</a> </td>
           </tr>
         <% }) %>
       <% } %>

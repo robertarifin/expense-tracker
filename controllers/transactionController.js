@@ -4,12 +4,15 @@ const Model = require('../models/index')
 
 class TransactionController {
     static showMonthlyInfo(req, res) {
+        if(req.session.user === undefined) res.redirect('/?info=Timeout');
+
         let totalExpense = []
         
         if(req.body.fromDate != null) {
             let startDate = new Date(req.body.startDate)
             let untilDate = new Date(req.body.untilDate) || null
         } else {
+            console.log(req.session.user, `============`)
             Model.Transaction.findAll({
                 where: {
                     UserId: req.session.user.id,
@@ -52,18 +55,21 @@ class TransactionController {
                         totalExpense.splice(i, 1);
                     }
                 }
-          
+                
             let obj = {
                 expense: expense,
                 income: income,
                 money: income - expense,
-                data: totalExpense
+                data: totalExpense,
+                errorMessage: req.query.info || ''
             }
         
             res.render('./pages/transaction.ejs', obj)
         })
         .catch(err => {
-            res.send(err)
+            console.log(`masuk catch`);
+            res.redirect('/');
+            // res.send(err)
         })   
     }
 }
@@ -218,7 +224,7 @@ class TransactionController {
             }
         )
         .then(() => {
-            res.redirect('/transaction');
+            res.redirect(`/transaction?info=Expense deleted`);
         })
         .catch(err => {
             res.send(err);

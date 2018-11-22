@@ -6,19 +6,25 @@ const memberRoutes = require('./routes/member');
 const session = require('express-session');
 const transactionRoutes = require('./routes/transaction');
 const formatCurrency = require('./helpers/formatCurrency');
+var cookieSession = require('cookie-session')
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: false}));
 app.use(express.static(__dirname + '/views'));
 
-app.use(session({
-    secret: 'Robert and Desy',
-    cookie: { secure: false }
+app.use(cookieSession({
+    name: 'session',
+    keys: ['Robert and Desy'],
+    // secret: 'Robert and Desy',
+    // cookie: { secure: false }
+    maxAge: 60 * 1000 // 24 hours
 }));
+//testing restart server
 
 app.use(function (req, res, next) {
     res.locals.session = req.session;
     res.locals.formatCurrency = formatCurrency;
+    req.session.nowInMinutes = Math.floor(Date.now() / 60e3);
     next();
 });
 
