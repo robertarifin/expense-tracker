@@ -36,7 +36,15 @@ class MemberController {
             
             let inputPass = decrypt(input.password, data.password)
             if(!inputPass) throw `Wrong password`;
-            res.send(data);
+            req.session.user = {
+                id: data.id,
+                firstName: data.firstName,
+                lastName: data.lastName,
+                username: data.email
+            }
+            
+            res.redirect('/');
+            // res.send(req.session.user);
             // res.send(correctPass);
         })
         .catch(err => {

@@ -10,12 +10,19 @@ app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: false}));
 app.use(express.static(__dirname + '/views'));
 
-app.use('/', homeRoutes);
-app.use('/member/', memberRoutes);
-
 app.use(session({
     secret: 'Robert and Desy',
+    cookie: { secure: false }
 }));
+
+app.use(function (req, res, next) {
+    res.locals.session = req.session
+    next();
+});
+
+// routes
+app.use('/', homeRoutes);
+app.use('/member/', memberRoutes);
 
 app.get('/*', (req, res) => {
     res.render('./pages/404error.ejs');    
