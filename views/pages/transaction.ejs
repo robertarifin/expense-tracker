@@ -3,10 +3,26 @@
 
 <h1>Transaction List</h1>
 
-<p>Name: <%= session.user.firstName %></p>
-<p>Income this month: </p>
-<p>Expense this month: </p>
-<p>Total money had: </p>
+<table class="table">
+        <thead>
+            <tr>
+                <th>Name:</th>
+                <td> <%= session.user.firstName %> <%= session.user.lastName %></td>
+            </tr>
+             <tr>
+                <th>Income this month:</th>
+                <td><%= income %></td>
+            </tr>
+            <tr>
+                <th>Expense this month:</th>
+                <td><%= expense %></td>
+            </tr>
+            <tr>
+                <th>Total money:</th>
+                <td><%= money %></td>
+            </tr>
+      </table>
+
 <a href="/transaction/<%= session.user.id%>/add-income" class="btn btn-primary" role="button">Add Income</a>
 <a href="/transaction/<%= session.user.id%>/add-expense" class="btn btn-primary" role="button">Add Expense</a>
 

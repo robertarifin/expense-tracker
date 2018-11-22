@@ -1,21 +1,76 @@
 "use strict"
 
 const Model = require('../models/index')
+const Sequelize = Model.Sequelize
+const sequelize = Model.sequelize
 
 class TransactionController {
-    static showExpenseForm(req, res) {
-     Model.Expense.findAll()
-     .then(data => {
-        let obj = {
-            id: req.params.id,
-            data: data,
-            errorMessage : req.query.result || ''
-        }
+    static showMonthlyInfo(req, res) {
+        let currentMonth = new Date().getMonth()
+        Model.Transaction.findAll({
+            where: {
+                UserId: req.session.user.id,
+            },
+            include: {
+                model: Model.Expense
+            }
+        })
+        .then(expenses => {
+            Model.Income.findAll( {
+                where: {
+                    UserId: req.session.user.id
+                }
+            })
+            .then(incomes => {
+                let expense = 0
+                let income = 0
+
+                console.log(incomes)
+                for (let i = 0; i < incomes.length; i++) {
+                    let month = new Date(expenses[i].date_transaction).getMonth()
+                    if (month == currentMonth) {
+                        income +=  incomes[i].amount
+                    }
+                }
+
+                for (let i = 0; i < expenses.length; i++) {
+                    let month = new Date(expenses[i].date_transaction).getMonth()
+                    if (month == currentMonth) {
+                        expense += expenses[i].Expenses[0].ExpensesTransaction.price
+                    }
+                }
     
-        res.render('./pages/expense.ejs', obj)
+                let obj = {
+                    expense: expense,
+                    income: income,
+                    money: income - expense
+                }
+            
+                res.render('./pages/transaction.ejs', obj)
+            })
+
+           
         })
         .catch(err => {
+            console.log(err)
             res.send(err)
+        })
+     
+    }
+   
+    static showExpenseForm(req, res) {
+        Model.Expense.findAll()
+        .then(data => {
+            let obj = {
+                id: req.params.id,
+                data: data,
+                errorMessage : req.query.result || ''
+            }
+        
+            res.render('./pages/expense.ejs', obj)
+            })
+        .catch(err => {
+                res.send(err)
         })
     }
 
