@@ -10,9 +10,7 @@ class TransactionController {
                 id: req.session.user.id,
                 errorMessage : req.query.result || ''
             }
-            
-            res.send(data)
-            res.render('../views/pages/expense.ejs', obj)
+            res.render('./pages/expense.ejs', obj)
         })
         .catch(err => {
            console.log(err)

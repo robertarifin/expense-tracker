@@ -2,8 +2,9 @@
 
 const routes = require('express').Router()
 const transactionController = require('../controllers/transactionController.js')
-routes.get('/', (req, res) => {
 
+routes.get('/', (req, res) => {
+    res.render('./pages/transaction.ejs');
 })
 
 routes.get('/:id/add-income', transactionController.showIncomeForm)
