@@ -14,6 +14,7 @@ class TransactionController {
             }
         })
         .then(expenses => {
+            // res.send(expenses);
             totalExpense = expenses
 
             return Model.Income.findAll( {
@@ -28,6 +29,12 @@ class TransactionController {
             let currentYear = new Date().getFullYear()
             let expense = 0
             let income = 0
+            
+            // res.send(totalExpense);
+            // for(let i = 0; i < totalExpense.length; i++) {
+            //     expense += totalExpense[i].Expenses[0].ExpensesTransaction.price;
+            // }
+            // console.log(expense);
 
             for (let i = 1; i <= 12; i++) {
                 let monthlyExpense = 0
@@ -46,7 +53,6 @@ class TransactionController {
                 })
             }
 
-
             for (let i = 0; i < incomes.length; i++) {
                 let month = new Date(incomes[i].date_transaction).getMonth()
                 let year = new Date(incomes[i].date_transaction).getFullYear()
@@ -55,15 +61,18 @@ class TransactionController {
                     income +=  incomes[i].amount
                 }
             }
-
+            
             for (let i = 0; i < totalExpense.length; i++) {
                 let month = new Date(totalExpense[i].date_transaction).getMonth()
                 let year = new Date(totalExpense[i].date_transaction).getFullYear()
 
                 if (month == currentMonth  && year == currentYear) {
                     expense += totalExpense[i].Expenses[0].ExpensesTransaction.price
+                } else {
+                    totalExpense.splice(i, 1);
                 }
             }
+            // console.log(incomes, totalExpense, `=========`)
 
             let obj = {
                 expense: expense,
@@ -74,6 +83,7 @@ class TransactionController {
 
             console.log(obj.items)
         
+            // console.log(obj);
             res.render('./pages/transaction.ejs', obj)
         })
         .catch(err => {
@@ -99,21 +109,24 @@ class TransactionController {
     }
 
     static getTransactionList(req, res) {
+        
+        // res.send(req.session.user)
         Model.Transaction.findAll( {
             where: {
-                UserId: 5
+                UserId: req.session.user.id
             },
-            include: [{
-                model: Model.Expense,
-                include: [{
-                model: Model.User,
-                }]
-            }]
+            include: [
+                {model: Model.Expense}, {model: Model.User}
+            ]        
         })
         .then((data) => {
-            res.send(data)
+            console.log(data[0].Expenses[0].ExpensesTransaction.price);
+            // console.log(data[0].Expenses.categoryName, `========`);
+            // res.send(data)
+            res.render('./pages/transaction.ejs', {data: data});
         })
         .catch((err) => {
+            // console.log(err, `=========`);
             res.send(err)
         })
     }
@@ -180,6 +193,17 @@ class TransactionController {
         } else {
             res.redirect(`/transaction/2/add-income?result=minimal price is 500`)
         }
+    }
+
+    static deleteExpense(req, res) {
+        Model.Transaction.destroy({where: {id: req.params.transactionId}})
+        .then(() => {
+            res.redirect('/transaction');
+        })
+        .catch(err => {
+            res.send(err);
+        })
+        // res.send(req.params);
     }
 }
 
