@@ -5,86 +5,106 @@ const Model = require('../models/index')
 class TransactionController {
     static showMonthlyInfo(req, res) {
         let totalExpense = []
-        let currentMonth = new Date().getMonth()
-        let currentYear = new Date().getFullYear()
-
-        Model.Transaction.findAll({
-            where: {
-                UserId: req.session.user.id,
-            },
-            include: {
-                model: Model.Expense
-            }
-        })
-        .then(expenses => {
-            // res.send(expenses);
-            totalExpense = expenses
-
-            return Model.Income.findAll( {
+        
+        if(req.body.fromDate != null) {
+            let startDate = new Date(req.body.startDate)
+            let untilDate = new Date(req.body.untilDate) || null
+        } else {
+            Model.Transaction.findAll({
                 where: {
-                    UserId: req.session.user.id
+                    UserId: req.session.user.id,
+                },
+                include: {
+                    model: Model.Expense
                 }
             })
-        })
-        .then(incomes => {
-            let expense = 0
-            let income = 0
-            
-            // res.send(totalExpense);
-            // for(let i = 0; i < totalExpense.length; i++) {
-            //     expense += totalExpense[i].Expenses[0].ExpensesTransaction.price;
-            // }
-            // console.log(expense);
+            .then(expenses => {
+                totalExpense = expenses
 
-            if(incomes.length > 0){
+                return Model.Income.findAll( {
+                    where: {
+                        UserId: req.session.user.id
+                    }
+                })
+            })
+            .then(incomes => {
+                let currentYear = new Date().getFullYear()
+                let currentMonth = new Date().getMonth()
+                let expense = 0
+                let income = 0
+
                 for (let i = 0; i < incomes.length; i++) {
                     let month = new Date(incomes[i].date_transaction).getMonth()
                     let year = new Date(incomes[i].date_transaction).getFullYear()
+
                     if (month == currentMonth && year == currentYear) {
                         income +=  incomes[i].amount
                     }
                 }
-            }
-            
-            for (let i = 0; i < totalExpense.length; i++) {
-                let month = new Date(totalExpense[i].date_transaction).getMonth()
-                let year = new Date(incomes[i].date_transaction).getFullYear()
-                // console.log(month, year, currentMonth, currentYear);                
-                if (month == currentMonth && year == currentYear) {                    
-                    expense += totalExpense[i].Expenses[0].ExpensesTransaction.price
-                } else {
-                    totalExpense.splice(i, 1);
-                }
-            }
-            // console.log(incomes, totalExpense, `=========`)
+                
+                for (let i = 0; i < totalExpense.length; i++) {
+                    let month = new Date(totalExpense[i].date_transaction).getMonth()
+                    let year = new Date(totalExpense[i].date_transaction).getFullYear()
 
+                    if (month == currentMonth  && year == currentYear) {
+                        expense += totalExpense[i].Expenses[0].ExpensesTransaction.price
+                    } else {
+                        totalExpense.splice(i, 1);
+                    }
+                }
+          
             let obj = {
                 expense: expense,
-                income: income || 0,
+                income: income,
                 money: income - expense,
                 data: totalExpense
+            }
+        
+            res.render('./pages/transaction.ejs', obj)
+        })
+        .catch(err => {
+            res.send(err)
+        })   
+    }
+}
+
+    static showEditExpenseForm(req, res) {
+        Model.ExpensesTransaction.findOne({
+            where: {
+                TransactionId: req.params.id
+            }
+        })
+        .then(data =>{
+            let obj = {
+                id: req.params.id,
+                price: data.price,
+                description: data.detail_transaction,
+                errorMessage: req.query.result || ''
             }
 
-            // console.log(obj, `obj================`)
-        
-            // console.log(obj);
-            res.render('./pages/transaction.ejs', obj)
+            res.render('./pages/editExpense.ejs', obj)
         })
-        .catch(err => {   
-            let obj = {
-                expense: 0,
-                income: 0,
-                money: income - expense,
-                data: totalExpense
+    }
+
+    static editExpenseForm(req, res) {
+        Model.ExpensesTransaction.update( {
+                price: req.body.price,
+                detail_transaction: req.body.detail
+            }, {
+                where: {
+                    TransactionId: req.params.id
+                }
             }
-        
-            // console.log(`masuk error=========`);
-            res.render('./pages/transaction.ejs', obj)
-            // res.redirect('/transaction');
-            // console.log(err)
-            // res.send(err)
+        )
+        .then(data =>{
+            res.redirect(`/transaction?result=edit expense success`)
         })
-     
+        .catch(err => {
+            if (err.errors[0].message == 'Validation min on price failed') {
+                res.redirect(`/transaction/${req.params.id}/edit-expense?result=minimal price is 500`)
+            }
+          
+        })
     }
    
     static showExpenseForm(req, res) {
@@ -201,5 +221,6 @@ class TransactionController {
         // res.send(req.params);
     }
 }
+
 
 module.exports = TransactionController
