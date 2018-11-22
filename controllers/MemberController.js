@@ -43,7 +43,7 @@ class MemberController {
                 username: data.email
             }
             
-            res.redirect('/');
+            res.redirect('/transaction');
             // res.send(req.session.user);
             // res.send(correctPass);
         })

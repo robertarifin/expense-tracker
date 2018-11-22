@@ -1,0 +1,13 @@
+<%- include ../partials/header.ejs %>
+<%- include ../partials/navbar.ejs %>
+
+<h1>Transaction List</h1>
+
+<p>Name: <%= session.user.firstName %></p>
+<p>Income this month: </p>
+<p>Expense this month: </p>
+<p>Total money had: </p>
+<a href="/transaction/<%= session.user.id%>/add-income" class="btn btn-primary" role="button">Add Income</a>
+<a href="/transaction/<%= session.user.id%>/add-expense" class="btn btn-primary" role="button">Add Expense</a>
+
+<%- include ../partials/footer.ejs %>

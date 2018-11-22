@@ -11,7 +11,7 @@ class TransactionController {
                 id: 2 || req.params.id,
                 errorMessage : req.query.result
             }
-            res.render('../views/pages/expense.ejs', obj)
+            res.render('./pages/expense.ejs', obj)
         })
         .catch(err => {
             res.send(err)
