@@ -24,12 +24,17 @@ module.exports = (sequelize, DataTypes) => {
         .catch((err) => {
           throw(err)
         })
+      },
+      afterDestroy: (input, options) => {
+        return sequelize.models.ExpensesTransaction.destroy({where: {TransactionId: input.id}})
+        .then(data => {
+
+        })
+        .catch(err => {
+          throw(err)
+        })
       }
     }
-  });
-
-  Transaction.afterDestroy((input, options) => {
-    console.log(input, `from hooks after destroy===========`)
   });
 
   Transaction.associate = function(models) {

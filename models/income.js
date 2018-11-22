@@ -8,7 +8,14 @@ module.exports = (sequelize, DataTypes) => {
         isDate: true
         }
       },
-    amount: DataTypes.INTEGER
+    amount: {
+      type: DataTypes.INTEGER,
+      validate: {
+        min: 10000,
+        max: 30000000
+      }
+    } 
+    
   }, {});
   Income.associate = function(models) {
     Income.belongsTo(models.User)

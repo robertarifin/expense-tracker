@@ -211,14 +211,18 @@ class TransactionController {
     }
 
     static deleteExpense(req, res) {
-        Model.Transaction.destroy({where: {id: req.params.transactionId}})
+        Model.Transaction.destroy(
+            {
+                where: {id: req.params.transactionId},
+                individualHooks: true
+            }
+        )
         .then(() => {
             res.redirect('/transaction');
         })
         .catch(err => {
             res.send(err);
-        })
-        // res.send(req.params);
+        });
     }
 }
 
