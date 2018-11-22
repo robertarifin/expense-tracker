@@ -1,14 +1,29 @@
 "use strict"
 
 const Model = require('../models/index')
+const Op = Model.Sequelize.Op
 
 class TransactionController {
     static showMonthlyInfo(req, res) {
         let totalExpense = []
         
         if(req.body.fromDate != null) {
+            console.loog(' MASA GA MASUK')
             let startDate = new Date(req.body.startDate)
             let untilDate = new Date(req.body.untilDate) || null
+
+            Model.Transaction.findAll({
+                where: {
+                    UserId: req.session.user.id,
+                    [Op.between]: [startDate, untilDate] 
+                },
+                include: {
+                    model: Model.Expense
+                }
+            })
+            .then(expenses => {
+                res.send(expenses)
+            })
         } else {
             Model.Transaction.findAll({
                 where: {
