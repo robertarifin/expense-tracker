@@ -23,11 +23,11 @@ app.use(function (req, res, next) {
 // routes
 app.use('/', homeRoutes);
 app.use('/member/', memberRoutes);
+app.use('/transaction', transactionRoutes);
 
 app.get('/*', (req, res) => {
     res.render('./pages/404error.ejs');    
 });
-app.use('/transaction', transactionRoutes)
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
