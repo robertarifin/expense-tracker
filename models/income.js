@@ -1,7 +1,7 @@
 'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Income = sequelize.define('Income', {
-    userId: DataTypes.INTEGER,
+    UserId: DataTypes.INTEGER,
     date_transaction:  {
       type: DataTypes.DATE,
       validate: {

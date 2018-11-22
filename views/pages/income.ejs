@@ -1,8 +1,10 @@
 <%- include ../partials/header.ejs %>
+<%- include ../partials/navbar.ejs %>
+
 <div class="container">
   <h2>Add income form</h2>
   <%- include ../partials/alert.ejs %>
-  <form action="/transaction/2/add-income" method="POST">
+  <form action="/transaction/<%= session.user.id %>/add-income" method="POST">
     <div class="form-group">
         <div class="form-group">
             <label for="date">Amount:</label>
@@ -15,4 +17,4 @@
   </form>
 </div>
 
-<%- include ../partials/header.ejs %>
+<%- include ../partials/footer.ejs %>
