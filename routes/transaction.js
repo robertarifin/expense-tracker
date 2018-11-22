@@ -7,19 +7,13 @@ routes.get('/', (req, res) => {
     res.render('./pages/transaction.ejs');
 })
 
-routes.get('/:id/add-expense', (req, res) => {
+routes.get('/:id/add-income', transactionController.showIncomeForm)
+routes.get('/:id', transactionController.getTransactionList)
 
-})
+routes.post('/:id/add-income', transactionController.addIncome)
 
-routes.post('/:id/add-expense', (req, res) => {
+routes.get('/:id/add-expense', transactionController.showExpenseForm)
+routes.post('/:id/add-expense', transactionController.addExpense)
 
-})
-
-routes.get('/:id/add-income', transactionController.showExpenseForm)
-routes.post('/:id/add-income', transactionController.addExpense)
-
-routes.post('/:id/add-income', (req, res) => {
-
-})
 
 module.exports = routes

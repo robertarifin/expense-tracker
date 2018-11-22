@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   User.associate = function(models) {
     User.hasMany(models.Transaction)
+    User.hasMany(models.Income)
   };
 
   User.beforeCreate((user, options) => {

@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     categoryName: DataTypes.STRING
   }, {});
   Expense.associate = function(models) {
-    Expense.belongsToMany(models.Transaction, {through: models.ExpensesTransaction})
+    Expense.belongsToMany(models.Transaction, {through: models.ExpensesTransaction, foreignKey: 'CategoryId'})
   };
   return Expense;
 };
