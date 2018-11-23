@@ -21,7 +21,16 @@ class MemberController {
             res.redirect('/member/login');
         })
         .catch( err => {
-            res.send(err);
+            let errs = []
+            err.errors.forEach(error => {
+                if(error.message === 'Validation len on password failed') errs.push(error.message)
+                // else delete error.message
+            });
+            // res.send(errs);
+            if(errs.length > 0) {
+                errs = `Password length minimum is 6`
+            }
+            res.redirect(`/member/register?info=${errs}`);
         })
     }
 
@@ -50,7 +59,8 @@ class MemberController {
             // res.send(correctPass);
         })
         .catch(err => {
-            console.log(`masuk error =========`, err);
+            // console.log(`masuk error =========`, err);
+            // res.redirect(`/member/login`, {msg: err});
             res.redirect(`/member/login?info=${err}`);
             // res.send(err);
         });

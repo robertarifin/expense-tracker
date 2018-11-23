@@ -5,6 +5,8 @@ const Op = Model.Sequelize.Op
 
 class TransactionController {
     static showMonthlyInfo(req, res) {
+        if(req.session.user === undefined) res.redirect('/?info=Timeout');
+
         let totalExpense = []
         let startDate = new Date(new Date(req.query.fromDate) - 24 * 60 * 60 * 1000) || null
         let untilDate = new Date(new Date(req.query.untilDate) - 24 * 60 * 60 * 1000) || null
@@ -58,6 +60,7 @@ class TransactionController {
                      }
                     }
                 }
+<<<<<<< HEAD
         
         let obj = {
             expense: expense,
@@ -71,6 +74,24 @@ class TransactionController {
     .catch(err => {
         res.send(err)
     })   
+=======
+                
+            let obj = {
+                expense: expense,
+                income: income,
+                money: income - expense,
+                data: totalExpense,
+                errorMessage: req.query.info || ''
+            }
+        
+            res.render('./pages/transaction.ejs', obj)
+        })
+        .catch(err => {
+            console.log(`masuk catch`);
+            res.redirect('/');
+            // res.send(err)
+        })   
+>>>>>>> ffe93457283da00d2704c88182e76aeb6bc233cc
     }
 
     static showEditExpenseForm(req, res) {
@@ -216,14 +237,18 @@ class TransactionController {
     }
 
     static deleteExpense(req, res) {
-        Model.Transaction.destroy({where: {id: req.params.transactionId}})
+        Model.Transaction.destroy(
+            {
+                where: {id: req.params.transactionId},
+                individualHooks: true
+            }
+        )
         .then(() => {
-            res.redirect('/transaction');
+            res.redirect(`/transaction?info=Expense deleted`);
         })
         .catch(err => {
             res.send(err);
-        })
-        // res.send(req.params);
+        });
     }
 }
 
