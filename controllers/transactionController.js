@@ -1,60 +1,80 @@
 "use strict"
 
 const Model = require('../models/index')
+const Op = Model.Sequelize.Op
 
 class TransactionController {
     static showMonthlyInfo(req, res) {
         if(req.session.user === undefined) res.redirect('/?info=Timeout');
 
         let totalExpense = []
-        
-        if(req.body.fromDate != null) {
-            let startDate = new Date(req.body.startDate)
-            let untilDate = new Date(req.body.untilDate) || null
-        } else {
-            console.log(req.session.user, `============`)
-            Model.Transaction.findAll({
+        let startDate = new Date(new Date(req.query.fromDate) - 24 * 60 * 60 * 1000) || null
+        let untilDate = new Date(new Date(req.query.untilDate) - 24 * 60 * 60 * 1000) || null
+
+        console.log(startDate, '=====')
+        Model.Transaction.findAll({
+            where: {
+                UserId: req.session.user.id,
+            },
+            include: {
+                model: Model.Expense
+            }
+        })
+        .then(expenses => {
+            totalExpense = expenses
+
+            return Model.Income.findAll( {
                 where: {
-                    UserId: req.session.user.id,
-                },
-                include: {
-                    model: Model.Expense
+                    UserId: req.session.user.id
                 }
             })
-            .then(expenses => {
-                totalExpense = expenses
+        })
+        .then(incomes => {
+            let currentYear = new Date().getFullYear()
+            let currentMonth = new Date().getMonth()
+            let expense = 0
+            let income = 0
+            
+            for (let i = 0; i < incomes.length; i++) {
+                let month = new Date(incomes[i].date_transaction).getMonth()
+                let year = new Date(incomes[i].date_transaction).getFullYear()
 
-                return Model.Income.findAll( {
-                    where: {
-                        UserId: req.session.user.id
-                    }
-                })
-            })
-            .then(incomes => {
-                let currentYear = new Date().getFullYear()
-                let currentMonth = new Date().getMonth()
-                let expense = 0
-                let income = 0
-
-                for (let i = 0; i < incomes.length; i++) {
-                    let month = new Date(incomes[i].date_transaction).getMonth()
-                    let year = new Date(incomes[i].date_transaction).getFullYear()
-
-                    if (month == currentMonth && year == currentYear) {
-                        income +=  incomes[i].amount
-                    }
+                if (month == currentMonth && year == currentYear) {
+                    income +=  incomes[i].amount
                 }
-                
-                for (let i = 0; i < totalExpense.length; i++) {
-                    let month = new Date(totalExpense[i].date_transaction).getMonth()
-                    let year = new Date(totalExpense[i].date_transaction).getFullYear()
-
-                    if (month == currentMonth  && year == currentYear) {
-                        expense += totalExpense[i].Expenses[0].ExpensesTransaction.price
+            }
+            
+            for (let i = 0; i < totalExpense.length; i++) {
+                let month = new Date(totalExpense[i].date_transaction).getMonth()
+                let year = new Date(totalExpense[i].date_transaction).getFullYear()
+           
+                if (month == currentMonth  && year == currentYear) {
+                    expense += totalExpense[i].Expenses[0].ExpensesTransaction.price
+                } else {
+                    if (startDate == null) {
+                    
                     } else {
-                        totalExpense.splice(i, 1);
+                        if (totalExpense[i].date_transaction < startDate || totalExpense[i].date_transaction > untilDate) {
+                            totalExpense.splice(i, 1);
+                        }
+                     }
                     }
                 }
+<<<<<<< HEAD
+        
+        let obj = {
+            expense: expense,
+            income: income,
+            money: income - expense,
+            data: totalExpense
+        }
+    
+        res.render('./pages/transaction.ejs', obj)
+    })
+    .catch(err => {
+        res.send(err)
+    })   
+=======
                 
             let obj = {
                 expense: expense,
@@ -71,8 +91,8 @@ class TransactionController {
             res.redirect('/');
             // res.send(err)
         })   
+>>>>>>> ffe93457283da00d2704c88182e76aeb6bc233cc
     }
-}
 
     static showEditExpenseForm(req, res) {
         Model.ExpensesTransaction.findOne({
