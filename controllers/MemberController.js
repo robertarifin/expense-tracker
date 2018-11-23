@@ -66,7 +66,7 @@ class MemberController {
     }
     
     static logout(req, res) {
-        delete req.session.user;
+        req.session = null;
         res.redirect('/');
     }
 }

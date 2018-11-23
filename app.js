@@ -1,12 +1,13 @@
 const express = require('express');
 const app = express();
 const port = 3000;
+var cookieSession = require('cookie-session')
+// const session = require('express-session');
 const homeRoutes = require('./routes/index');
 const memberRoutes = require('./routes/member');
-const session = require('express-session');
 const transactionRoutes = require('./routes/transaction');
 const formatCurrency = require('./helpers/formatCurrency');
-var cookieSession = require('cookie-session')
+const styling = require('./helpers/styling');
 
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended: false}));
@@ -17,13 +18,14 @@ app.use(cookieSession({
     keys: ['Robert and Desy'],
     // secret: 'Robert and Desy',
     // cookie: { secure: false }
-    maxAge: 60 * 1000 // 24 hours
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }));
 //testing restart server
 
 app.use(function (req, res, next) {
     res.locals.session = req.session;
     res.locals.formatCurrency = formatCurrency;
+    res.locals.styling = styling;
     req.session.nowInMinutes = Math.floor(Date.now() / 60e3);
     next();
 });
