@@ -1,4 +1,9 @@
 'use strict';
+
+/*
+  *ORM for expense
+  *
+*/
 module.exports = (sequelize, DataTypes) => {
   const Expense = sequelize.define('Expense', {
     categoryName: DataTypes.STRING
