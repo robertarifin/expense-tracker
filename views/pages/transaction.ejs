@@ -8,19 +8,19 @@
         <thead>
             <tr>
                 <th>Name:</th>
-                <td> <%= session.user.firstName %> <%= session.user.lastName %></td>
+                <td><strong><%= session.user.firstName %> <%= session.user.lastName %></strong></td>
             </tr>
              <tr>
                 <th>Income this month:</th>
-                <td><%= formatCurrency(income) %></td>
+                <td style="color:green"><%= formatCurrency(income) %></td>
             </tr>
             <tr>
                 <th>Expense this month:</th>
-                <td><%= formatCurrency(expense) %></td>
+                <td style="color: red"><%= formatCurrency(expense) %></td>
             </tr>
             <tr>
                 <th>Total money:</th>
-                <td><%= formatCurrency(money) %></td>
+                <td style= <%= styling(money) %> ><%= formatCurrency(money) %></td>
             </tr>
       </table>
 
@@ -57,7 +57,7 @@
             <td><%= index+1 %></td>
             <td><%= row.date_transaction.toDateString() %></td>
             <td><%= row.Expenses[0].categoryName %></td>
-            <td><%= formatCurrency(row.Expenses[0].ExpensesTransaction.price) %></td>
+            <td style="color:red"><%= formatCurrency(row.Expenses[0].ExpensesTransaction.price) %></td>
             <td><a href="/transaction/<%= row.id %>/edit-expense" class="btn btn-primary btn-sm" role="button">Edit</a> | <a href="/transaction/<%= session.user.id%>/<%=row.id %>/delete-expense" onclick="return confirm('Delete this expense?')" class="btn btn-danger btn-sm" role="button">Delete</a> </td>
           </tr>
         <% }) %>
